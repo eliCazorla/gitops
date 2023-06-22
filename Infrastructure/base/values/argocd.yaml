@@ -1,0 +1,32 @@
+server:
+  ingress:
+    enabled: true
+    https: true
+    ingressClassName: ${ingressClass}
+    annotations:
+      alb.ingress.kubernetes.io/target-type: ${ingressType}
+      alb.ingress.kubernetes.io/scheme: ${ingressScheme}
+      alb.ingress.kubernetes.io/listen-ports: '[{"HTTPS":443}]'
+      alb.ingress.kubernetes.io/healthcheck-path: ${healthCheckPath}
+      alb.ingress.kubernetes.io/backend-protocol: HTTPS
+    hosts: ${argocdHostList}
+    paths: ${argocdPaths}
+    tls:
+      - hosts: ${argocdHostList}
+  ingressGrpc:
+    enabled: true
+    isAWSALB: true
+    awsALB:
+      serviceType: ClusterIP
+  config:
+    url: https://${argocdHost}
+    dex.config: |
+      connectors:
+        - type: github
+          id: github
+          name: GitHub
+          config:
+            clientID: ${clientId}
+            clientSecret: ${clientSecret}
+            orgs:
+            - name: ${username}
